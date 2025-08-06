@@ -9,6 +9,7 @@ import {
     Patch,
     Post,
     Put,
+    Query,
     Request,
     UseGuards,
 } from '@nestjs/common';
@@ -18,6 +19,7 @@ import { User } from 'src/users/decorator/user.decorator';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PaginatePostDto } from './dto/paginate-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -25,14 +27,21 @@ export class PostsController {
 
     // 전체 posts
     @Get()
-    getPosts() {
-        return this.postsService.getAllPosts();
+    getPosts(@Query() query: PaginatePostDto) {
+        return this.postsService.paginatePost(query);
     }
 
     // 해당 posts
     @Get(':id')
     getPost(@Param('id', ParseIntPipe) id: number) {
         return this.postsService.getPostById(id);
+    }
+
+    @Post('random')
+    @UseGuards(AccessTokenGurad)
+    async postPostsRandom(@User('id') userId: number) {
+        await this.postsService.generatePosts(userId);
+        return true;
     }
 
     // post 생성
