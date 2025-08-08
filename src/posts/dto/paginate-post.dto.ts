@@ -3,6 +3,10 @@ import { IsIn, IsNumber, IsOptional } from 'class-validator';
 export class PaginatePostDto {
     @IsNumber()
     @IsOptional()
+    page?: number;
+
+    @IsNumber()
+    @IsOptional()
     where__id_less_than?: number;
 
     // ID보다 높은 ID부터 값을 가져오기
