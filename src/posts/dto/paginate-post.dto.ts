@@ -1,26 +1,12 @@
-import { IsIn, IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { BasePaginationDto } from 'src/common/dto/base-pagination.dto';
 
-export class PaginatePostDto {
+export class PaginatePostDto extends BasePaginationDto {
     @IsNumber()
     @IsOptional()
-    page?: number;
+    where__likeCount__more_than: number;
 
-    @IsNumber()
+    @IsString()
     @IsOptional()
-    where__id_less_than?: number;
-
-    // ID보다 높은 ID부터 값을 가져오기
-    @IsNumber()
-    @IsOptional()
-    where__id_more_than?: number;
-
-    // 정렬
-    @IsIn(['ASC', 'DESC'])
-    @IsOptional()
-    order__createdAt: 'ASC' | 'DESC' = 'ASC';
-
-    // 몇개의 데이터 응답으로 받을지
-    @IsNumber()
-    @IsOptional()
-    take: number = 20;
+    where__title__i_like: string;
 }

@@ -3,7 +3,8 @@ import { CommonService } from './common.service';
 import { CommonController } from './common.controller';
 
 @Module({
-  controllers: [CommonController],
-  providers: [CommonService],
+    controllers: [CommonController],
+    providers: [CommonService],
+    exports: [CommonService],
 })
 export class CommonModule {}
