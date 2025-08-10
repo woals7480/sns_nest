@@ -141,7 +141,7 @@ export class PostsService {
         return post;
     }
 
-    async createPost(authorId: number, postDto: CreatePostDto) {
+    async createPost(authorId: number, postDto: CreatePostDto, image?: string) {
         const post = this.postsRepository.create({
             author: {
                 id: authorId,
@@ -149,6 +149,7 @@ export class PostsService {
             ...postDto,
             likeCount: 0,
             commentCount: 0,
+            image,
         });
 
         const newPost = await this.postsRepository.save(post);
