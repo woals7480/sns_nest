@@ -50,13 +50,9 @@ export class PostsController {
     // post 생성
     @Post()
     @UseGuards(AccessTokenGurad)
-    @UseInterceptors(FileInterceptor('image'))
-    postPost(
-        @User('id') userId: number,
-        @Body() postDto: CreatePostDto,
-        @UploadedFile() file?: Express.Multer.File,
-    ) {
-        return this.postsService.createPost(userId, postDto, file?.filename);
+    async postPost(@User('id') userId: number, @Body() postDto: CreatePostDto) {
+        await this.postsService.createPostImage(postDto);
+        return this.postsService.createPost(userId, postDto);
     }
 
     // 해당 post 변경

@@ -32,7 +32,8 @@ export class PostsModel extends BaseModel {
         nullable: true,
     })
     @Transform(
-        ({ value }) => value && `/${join(POST_PUBLIC_IMAGE_PATH, value)}`,
+        ({ value }): string =>
+            value && `/${join(POST_PUBLIC_IMAGE_PATH, value)}`,
     )
     image?: string;
 
