@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -9,6 +10,7 @@ import {
     Patch,
     Post,
     Query,
+    UseFilters,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
@@ -24,6 +26,7 @@ import { PostsImagesService } from './image/images.service';
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-filter';
 
 @Controller('posts')
 export class PostsController {
@@ -37,6 +40,8 @@ export class PostsController {
     @Get()
     @UseInterceptors(LogInterceptor)
     getPosts(@Query() query: PaginatePostDto) {
+        throw new BadRequestException('에러 테스트');
+
         return this.postsService.paginatePost(query);
     }
 
