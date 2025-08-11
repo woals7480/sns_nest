@@ -40,8 +40,6 @@ export class PostsController {
     @Get()
     @UseInterceptors(LogInterceptor)
     getPosts(@Query() query: PaginatePostDto) {
-        throw new BadRequestException('에러 테스트');
-
         return this.postsService.paginatePost(query);
     }
 
