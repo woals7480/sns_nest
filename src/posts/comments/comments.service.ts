@@ -96,4 +96,15 @@ export class CommentsService {
 
         return commentId;
     }
+
+    async isCommentMine(userId: number, commentId: number) {
+        return this.commentRepository.exists({
+            where: {
+                id: commentId,
+                author: {
+                    id: userId,
+                },
+            },
+        });
+    }
 }

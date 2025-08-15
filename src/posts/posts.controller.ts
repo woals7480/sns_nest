@@ -30,6 +30,7 @@ import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-
 import { Roles } from 'src/users/decorator/roles.decorator';
 import { RolesEnum } from 'src/users/const/roles.const';
 import { isPublic } from 'src/common/decorator/is-public.decorator';
+import { IsPostMineOrAdminGuard } from './guard/is-post-mine-or-admin.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -88,12 +89,13 @@ export class PostsController {
     }
 
     // 해당 post 변경
-    @Patch(':id')
+    @Patch(':postId')
+    @UseGuards(IsPostMineOrAdminGuard)
     patchPost(
-        @Param('id', ParseIntPipe) id: number,
+        @Param('postId', ParseIntPipe) postId: number,
         @Body() body: UpdatePostDto,
     ) {
-        return this.postsService.updatePost(id, body);
+        return this.postsService.updatePost(postId, body);
     }
 
     // post 삭제
