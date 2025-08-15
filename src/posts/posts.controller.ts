@@ -27,6 +27,9 @@ import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-filter';
+import { Roles } from 'src/users/decorator/roles.decorator';
+import { RolesEnum } from 'src/users/const/roles.const';
+import { isPublic } from 'src/common/decorator/is-public.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -39,18 +42,19 @@ export class PostsController {
     // 전체 posts
     @Get()
     @UseInterceptors(LogInterceptor)
+    @isPublic()
     getPosts(@Query() query: PaginatePostDto) {
         return this.postsService.paginatePost(query);
     }
 
     // 해당 posts
     @Get(':id')
+    @isPublic()
     getPost(@Param('id', ParseIntPipe) id: number) {
         return this.postsService.getPostById(id);
     }
 
     @Post('random')
-    @UseGuards(AccessTokenGurad)
     async postPostsRandom(@User('id') userId: number) {
         await this.postsService.generatePosts(userId);
         return true;
@@ -58,7 +62,6 @@ export class PostsController {
 
     // post 생성
     @Post()
-    @UseGuards(AccessTokenGurad)
     @UseInterceptors(TransactionInterceptor)
     async postPost(
         @User('id') userId: number,
@@ -95,6 +98,7 @@ export class PostsController {
 
     // post 삭제
     @Delete(':id')
+    @Roles(RolesEnum.ADMIN)
     deletePost(@Param('id', ParseIntPipe) id: number) {
         return this.postsService.deletePost(id);
     }
