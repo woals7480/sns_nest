@@ -3,7 +3,7 @@ import { CommonService } from 'src/common/common.service';
 import { PaginateCommentDto } from './dto/paginate-comments.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentsModel } from './entities/comments.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { CreateCommentsDto } from './dto/create-comments.dto';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { DEFAULT_COMMENT_FIND_OPTIONS } from './const/default-comment-find-options.const';
@@ -16,6 +16,12 @@ export class CommentsService {
         private readonly commentRepository: Repository<CommentsModel>,
         private readonly commonService: CommonService,
     ) {}
+
+    getRepository(qr?: QueryRunner) {
+        return qr
+            ? qr.manager.getRepository<CommentsModel>(CommentsModel)
+            : this.commentRepository;
+    }
 
     paginateComments(postId: number, dto: PaginateCommentDto) {
         return this.commonService.paginate(
@@ -54,8 +60,11 @@ export class CommentsService {
         dto: CreateCommentsDto,
         postId: number,
         author: UsersModel,
+        qr?: QueryRunner,
     ) {
-        return this.commentRepository.save({
+        const repository = this.getRepository(qr);
+
+        return repository.save({
             ...dto,
             post: {
                 id: postId,
@@ -81,8 +90,10 @@ export class CommentsService {
         return newComment;
     }
 
-    async deleteComment(commentId: number) {
-        const comment = await this.commentRepository.findOne({
+    async deleteComment(commentId: number, qr?: QueryRunner) {
+        const repository = this.getRepository(qr);
+
+        const comment = await repository.findOne({
             where: {
                 id: commentId,
             },
@@ -92,7 +103,7 @@ export class CommentsService {
             throw new BadRequestException('존재하지 않는 댓글입니다.');
         }
 
-        await this.commentRepository.delete(commentId);
+        await repository.delete(commentId);
 
         return commentId;
     }
